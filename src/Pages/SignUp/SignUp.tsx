@@ -4,8 +4,34 @@ import { FaFacebookF } from "react-icons/fa";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import Login from "../Login/Login";
+import { useForm } from "react-hook-form";
+import { useContext } from "react";
+import { AuthContext } from "../../Providers/AuthProvider";
 
-const SignUp = () => {
+interface SignUpFormData {
+  name: string;
+  photoURL: string;
+  email: string;
+  password: string;
+}
+
+const SignUp: React.FC = () => {
+  const { createUser } = useContext(AuthContext);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpFormData>();
+
+  const onSubmit = (data: SignUpFormData) => {
+    console.log(data);
+    createUser(data.email, data.password).then((result) => {
+      const loggedUser = result.user;
+      console.log(loggedUser);
+    });
+  };
+  // console.log(watch("example"));
+
   return (
     <>
       <h1 className="text-white mb-11">page</h1>
@@ -49,7 +75,7 @@ const SignUp = () => {
                 <div className="divider mt-8">OR</div>
                 {/* ============= */}
 
-                <form className="card-body">
+                <form onSubmit={handleSubmit(onSubmit)} className="card-body">
                   <div className="form-control">
                     <label className="label">
                       <span className="label-text font-bold text-slate-500">
@@ -58,14 +84,16 @@ const SignUp = () => {
                     </label>
                     <input
                       type="text"
-                      // {...register("name", { required: true })}
+                      {...register("name", { required: true })}
                       placeholder="name"
                       className="p-2 border-2"
                       required
                     />
-                    {/* {errors.name && ( */}
-                    <span className="text-red-400">name field is required</span>
-                    {/* )} */}
+                    {errors.name && (
+                      <span className="text-red-500">
+                        This field is required
+                      </span>
+                    )}
                   </div>
                   <div className="form-control">
                     <label className="label">
@@ -73,14 +101,14 @@ const SignUp = () => {
                     </label>
                     <input
                       type="file"
-                      // {...register("photoURL", { required: true })}
+                      {...register("photoURL", { required: true })}
                       placeholder="photo URL"
                       className="p-2 border-2"
                       required
                     />
-                    {/* {errors.photoURL && ( */}
-                    <span className="text-red-400">photoURL is required</span>
-                    {/* )} */}
+                    {errors.photoURL && (
+                      <span className="text-red-400">photoURL is required</span>
+                    )}
                   </div>
                   <div className="form-control">
                     <label className="label">
@@ -88,16 +116,16 @@ const SignUp = () => {
                     </label>
                     <input
                       type="email"
-                      // {...register("email", { required: true })}
+                      {...register("email", { required: true })}
                       placeholder="email"
                       className="p-2 border-2"
                       required
                     />
-                    {/* {errors.email && ( */}
-                    <span className="text-red-400">
-                      Email field is required
-                    </span>
-                    {/* )} */}
+                    {errors.email && (
+                      <span className="text-red-400">
+                        Email field is required
+                      </span>
+                    )}
                   </div>
                   <div className="form-control">
                     <label className="label">
@@ -105,21 +133,35 @@ const SignUp = () => {
                     </label>
                     <input
                       type="password"
-                      // {...register("password", {
-                      //   required: "Password is required",
-                      //   validate: (value) =>
-                      //     isPasswordValid(value) ||
-                      //     "Password must be one uppercase, one lowercase & one special character ",
-                      // })}
+                      {...register("password", {
+                        required: true,
+                        minLength: 6,
+                        maxLength: 20,
+                        pattern:
+                          /(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z])/,
+                      })}
                       placeholder="password"
-                      className="p-2 border-2"
-                      required
+                      className="input input-bordered"
                     />
-                    {/* {errors.password && (
-                  <span className="text-red-400">
-                    {errors.password.message}
-                  </span>
-                )} */}
+                    {errors.password?.type === "required" && (
+                      <p className="text-red-600">Password is required</p>
+                    )}
+                    {errors.password?.type === "minLength" && (
+                      <p className="text-red-600">
+                        Password must be 6 characters
+                      </p>
+                    )}
+                    {errors.password?.type === "maxLength" && (
+                      <p className="text-red-600">
+                        Password must be less than 20 characters
+                      </p>
+                    )}
+                    {errors.password?.type === "pattern" && (
+                      <p className="text-red-600">
+                        Password must have one Uppercase one lower case, one
+                        number and one special character.
+                      </p>
+                    )}
                     <label className="label">
                       <a href="#" className="label-text-alt link link-hover">
                         Forgot password?

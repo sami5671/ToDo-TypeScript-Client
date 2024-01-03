@@ -1,5 +1,6 @@
 import { FaFacebookF, FaGithub, FaGooglePlusG } from "react-icons/fa";
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "../../Providers/AuthProvider";
 
 // =================================================================
 // type InputProps = {
@@ -10,6 +11,7 @@ import React from "react";
 
 // =================================================================
 const Login: React.FC = () => {
+  const { signIn } = useContext(AuthContext);
   // =================================================================
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -17,6 +19,12 @@ const Login: React.FC = () => {
     const email = form.email.value;
     const password = form.password.value;
     console.log(email, password);
+
+    // =================================================================
+    signIn(email, password).then((result) => {
+      const user = result.user;
+      console.log(user);
+    });
   };
 
   // =================================================================
