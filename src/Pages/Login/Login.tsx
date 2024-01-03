@@ -1,6 +1,9 @@
 import { FaFacebookF, FaGithub, FaGooglePlusG } from "react-icons/fa";
 import React, { useContext } from "react";
 import { AuthContext } from "../../Providers/AuthProvider";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 // =================================================================
 // type InputProps = {
@@ -11,7 +14,9 @@ import { AuthContext } from "../../Providers/AuthProvider";
 
 // =================================================================
 const Login: React.FC = () => {
-  const { signIn } = useContext(AuthContext);
+  const { signIn, googleSign, GitHubSign, facebookSign } =
+    useContext(AuthContext);
+  const navigate = useNavigate();
   // =================================================================
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,9 +29,49 @@ const Login: React.FC = () => {
     signIn(email, password).then((result) => {
       const user = result.user;
       console.log(user);
+      navigate("/");
+      Swal.fire({
+        title: `Welcome to ToDo App ${user.name || user.email}`,
+        showClass: {
+          popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `,
+        },
+        hideClass: {
+          popup: `
+              animate__animated
+              animate__fadeOutDown
+              animate__faster
+            `,
+        },
+      });
     });
   };
 
+  // =================================================================
+  const handleGoogleLogin = () => {
+    googleSign().then((result) => {
+      console.log(result.user);
+      navigate("/");
+    });
+  };
+  // =================================================================
+  const handleGitHubLogin = () => {
+    GitHubSign().then((result) => {
+      console.log(result.user);
+      navigate("/");
+    });
+  };
+  // =================================================================
+  // =================================================================
+  const handleFacebookLogin = () => {
+    facebookSign().then((result) => {
+      console.log(result.user);
+      navigate("/");
+    });
+  };
   // =================================================================
   return (
     <>
@@ -44,14 +89,23 @@ const Login: React.FC = () => {
                 </p>
               </div>
               <div className="flex justify-center gap-6 mt-6">
-                <p className="border-2 border-red-400 text-4xl text-green-500 bg-slate-100 shadow-xl p-1">
+                <button
+                  onClick={handleGoogleLogin}
+                  className="cursor-pointer border-2 border-red-400 text-4xl text-green-500 bg-slate-100 shadow-xl p-1"
+                >
                   <FaGooglePlusG />
-                </p>
+                </button>
 
-                <p className="border-2 text-4xl bg-slate-200 shadow-xl p-1">
+                <p
+                  onClick={handleGitHubLogin}
+                  className="cursor-pointer border-2 text-4xl bg-slate-200 shadow-xl p-1"
+                >
                   <FaGithub />
                 </p>
-                <p className="border-2 text-4xl text-blue-500 bg-slate-200 shadow-xl p-1">
+                <p
+                  onClick={handleFacebookLogin}
+                  className="border-2 text-4xl text-blue-500 bg-slate-200 shadow-xl p-1"
+                >
                   <FaFacebookF />
                 </p>
               </div>

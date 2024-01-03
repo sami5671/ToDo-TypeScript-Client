@@ -1,7 +1,17 @@
 import { Link } from "react-router-dom";
 import { LuListTodo } from "react-icons/lu";
+import React, { useContext } from "react";
+import { AuthContext } from "../../Providers/AuthProvider";
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
+  // =================================================================
+  const { user, logOut } = useContext(AuthContext);
+  const handleLogout = () => {
+    logOut()
+      .then(() => {})
+      .catch((error) => console.log(error));
+  };
+  // =================================================================
   const navOptions = (
     <>
       <li className="">
@@ -14,11 +24,38 @@ const Navbar = () => {
           <div className="">SignUp</div>
         </Link>
       </li>
-      <li className="px-8 py-2 border-2 text-black hover:bg-blue-500 hover:text-white cursor-pointer">
-        <Link to="/login">
-          <div className="">Login</div>
-        </Link>
-      </li>
+      {user ? (
+        <>
+          <li
+            onClick={handleLogout}
+            className="px-8 py-2 border-2 text-black hover:bg-red-400 hover:text-white cursor-pointer"
+          >
+            <Link to="/login">
+              <div className="">LogOut</div>
+            </Link>
+          </li>
+        </>
+      ) : (
+        <>
+          <li className="px-8 py-2 border-2 text-black hover:bg-blue-500 hover:text-white cursor-pointer">
+            <Link to="/login">
+              <div className="">Login</div>
+            </Link>
+          </li>
+        </>
+      )}
+
+      {user ? (
+        <>
+          <img
+            src={user.photoURL}
+            className="w-[40px] h-[40px] rounded-full mt-1"
+            alt=""
+          />
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
   // =================================================================
